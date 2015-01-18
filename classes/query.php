@@ -1,8 +1,17 @@
 <?php
 /**
- * GET値(query)のURLが正規化用クラス
+ * Seo Package
  *
+ * @package    Seo
+ * @version    0.1
+ * @author     Hinashiki
+ * @license    MIT License
+ * @copyright  2015 - Hinashiki
+ * @link       https://github.com/hinashiki/fuelphp-seo
  */
+
+namespace Seo;
+
 class Query
 {
 	/**
@@ -13,7 +22,7 @@ class Query
 	 */
 	public static function build($uri = '')
 	{
-		$query = static::_make_query(Input::get());
+		$query = static::_make_query(\Fuel\Core\Input::get());
 		return $uri.$query;
 	}
 
@@ -53,7 +62,7 @@ class Query
 		ksort($query_arr);
 		$query = array();
 		// re-insert if page exists, get first
-		if(strlen(Arr::get($query_arr, 'page')) > 0)
+		if(strlen(\Fuel\Core\Arr::get($query_arr, 'page')) > 0)
 		{
 			// if page = 1, it's remove
 			if($query_arr['page'] > 1)
