@@ -1,4 +1,5 @@
 # fuelphp-seo
+[![Build Status](https://travis-ci.org/hinashiki/fuelphp-seo.svg?branch=master)](https://travis-ci.org/hinashiki/fuelphp-seo)  
 add original seo package to FuelPHP 1.5.x or later.  
 this package using redirect, noindex nofollow, canonical and so on.  
 this is FuelPHP package. if you want to use, please use as package.  
