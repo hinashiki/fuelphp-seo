@@ -1,0 +1,23 @@
+branches:
+  only:
+    - 'master'
+languate: php
+php:
+  - 5.6
+  - 5.5
+  - 5.4
+  - 5.3
+env:
+  - BRANCHES=1.7/master
+  - BRANCHES=1.6/master
+  - BRANCHES=1.5/master
+  - BRANCHES=1.4/master
+before_install:
+  - git clone --recursive --quiet --branch=$BRANCHES git://github.com/fuel/fuel.git "$HOME/fuelphp"
+install:
+  - if [ -e "$HOME/fuelphp/composer.json" ]; then pushd "$HOME/fuelphp" ; wget http://getcomposer.org/composer.phar ; php composer.phar install; popd ; fi
+before_script:
+  - ln -sf "`pwd`" "$HOME/fuelphp/fuel/packages/fuelphp-seo"
+  - cp -f "`pwd`/tests/travis-ci/config.php"  "$HOME/fuelphp/fuel/app/config/test/"
+script:
+  - phpunit -c "$HOME/fuelphp/fuel/core/phpunit.xml" --group=Hinashiki-fuelphp-seo --coverage-text
