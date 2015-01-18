@@ -13,6 +13,7 @@
 \Autoloader::add_namespace('Seo', __DIR__.'/classes/');
 \Autoloader::add_core_namespace('Seo');
 \Autoloader::add_classes(array(
-	'Seo\\Route' => __DIR__.'/classes/route.php',
 	'Seo\\Seo'   => __DIR__.'/classes/seo.php',
+	'Seo\\Route' => __DIR__.'/classes/route.php',
+	'Seo\\Query' => __DIR__.'/classes/query.php',
 ));
