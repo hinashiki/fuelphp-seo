@@ -1,6 +1,6 @@
 {
 	"name": "hinashiki/fuelphp-seo",
-	"description": "FuelPHP 1.7.x original Seo Package",
+	"description": "FuelPHP 1.5.x or later, add original Seo Package",
 	"type": "fuel-package",
 	"homepage": "https://github.com/hinashiki/fuelphp-seo",
 	"license": "MIT",
