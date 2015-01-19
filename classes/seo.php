@@ -16,6 +16,7 @@ class Seo
 {
 
 	protected $_request = null;
+	protected $_pagination = null;
 
 	protected static $_instance = null;
 
@@ -32,23 +33,13 @@ class Seo
 	 * @param object $request Request object
 	 * @return Seo object
 	 */
-	public static function instance($request)
+	public static function instance($request = null)
 	{
 		if(is_null(static::$_instance))
 		{
-			return static::forge($request);
+			static::$_instance = new self($request);
 		}
 		return static::$_instance;
-	}
-
-	/**
-	 *
-	 * @param object $request Request object
-	 * @return Seo object
-	 */
-	public static function forge($request)
-	{
-		return new self($request);
 	}
 
 	/**
@@ -85,6 +76,38 @@ class Seo
 	}
 
 	/**
+	 * check 404 render
+	 *
+	 * @return boolean
+	 */
+	public function is_404_render()
+	{
+		return $this->__skip;
+	}
+
+	/**
+	 * set pagination
+	 *
+	 * @param Pagination $Pagination \Seo\Pagination object
+	 * @return void
+	 */
+	public function set_pagination(Pagination $Pagination)
+	{
+		$this->_pagination = $Pagination;
+	}
+
+	/**
+	 * in controller before one pack
+	 *
+	 * @return void
+	 */
+	public function in_controller_before()
+	{
+		$this->check_redirect();
+		$this->check_canonical();
+	}
+
+	/**
 	 * check redirect
 	 *
 	 * @return void
@@ -111,7 +134,7 @@ class Seo
 		$redirect_uri = $this->_current_uri.$this->_current_get;
 
 		// reverse routing
-		$check_uri = \Seo\Route::reverse_route($this->_routed_uri);
+		$check_uri = Route::reverse_route($this->_routed_uri);
 		if($check_uri !== $this->_routed_uri or $check_uri !== $this->_current_uri)
 		{
 			$redirect_flg = true;
@@ -144,5 +167,109 @@ class Seo
 			\Fuel\Core\Log::debug($this->_current_uri.$this->_current_get.': redirect to '.$redirect_uri);
 			\Fuel\Core\Response::redirect($redirect_uri, 'location', 301);
 		}
+	}
+
+	/**
+	 * check canonical
+	 *
+	 * @return void
+	 */
+	public function check_canonical()
+	{
+		if($this->__skip === true)
+		{
+			return;
+		}
+
+		// init
+		$this->_canonical_uri = $this->_current_uri.$this->_current_get;
+
+		// query canonical check
+		$check_uri = Query::rebuild($this->_canonical_uri);
+		if($check_uri !== $this->_canonical_uri)
+		{
+			$this->_canonical_flg = true;
+			$this->_canonical_uri = \Fuel\Core\Config::get('base_url').$check_uri;
+		}
+	}
+
+	/**
+	 * set canonical
+	 *
+	 * @param string $uri canonical uri
+	 * @return void
+	 */
+	public function set_canonical($uri)
+	{
+		$this->_canonical_flg = true;
+		$this->_canonical_uri = $uri;
+	}
+
+	/**
+	 * set noindex
+	 *
+	 * @return void
+	 */
+	public function set_noindex()
+	{
+		$this->_noindex_flg = true;
+	}
+
+	/**
+	 * get meta html
+	 *
+	 * @return View Object
+	 */
+	public function get_meta_html()
+	{
+		return \Fuel\Core\View::forge('meta');
+	}
+
+	/**
+	 * noindex
+	 *
+	 * @return string
+	 */
+	public function noindex()
+	{
+		if($this->_noindex_flg === true)
+		{
+			return Seo_Html::noindex();
+		}
+		return '';
+	}
+
+	/**
+	 * canonical
+	 *
+	 * @return string
+	 */
+	public function canonical()
+	{
+		// not use when use noindex for seo
+		if($this->_noindex_flg === false && $this->_canonical_flg === true)
+		{
+			return Seo_Html::canonical($this->_canonical_uri);
+		}
+		return '';
+	}
+
+	/**
+	 * prev next
+	 *
+	 * @param function $function pass another prev_next method
+	 * @return string
+	 */
+	public function prev_next($function = null)
+	{
+		if(is_callable($function))
+		{
+			return $function();
+		}
+		elseif($this->_pagination instanceof Pagination)
+		{
+			return Seo_Html::prev_next($this->_pagination);
+		}
+		return '';
 	}
 }
