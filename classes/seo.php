@@ -257,16 +257,11 @@ class Seo
 	/**
 	 * prev next
 	 *
-	 * @param function $function pass another prev_next method
 	 * @return string
 	 */
-	public function prev_next($function = null)
+	public function prev_next()
 	{
-		if(is_callable($function))
-		{
-			return $function();
-		}
-		elseif($this->_pagination instanceof Pagination)
+		if($this->_pagination instanceof Pagination)
 		{
 			return Seo_Html::prev_next($this->_pagination);
 		}

@@ -15,9 +15,5 @@
 <?= Seo_Html::nocache() ?>
 <?= Seo::instance()->noindex() ?>
 <?= Seo::instance()->canonical() ?>
-<link rel="start" href="<?= \Config::get('base_url') ?>" />
-<?php if(isset($prev_next)): ?>
-	<?= Seo::instance()->prev_next($prev_next) ?>
-<?php else: ?>
-	<?= Seo::instance()->prev_next() ?>
-<?php endif; ?>
+<link rel="start" href="<?= \Fuel\Core\Config::get('base_url') ?>" />
+<?= Seo::instance()->prev_next() ?>
