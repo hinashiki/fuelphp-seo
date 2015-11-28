@@ -76,6 +76,16 @@ class Seo
 	}
 
 	/**
+	 * set $__skip = true
+	 *
+	 * @return void
+	 */
+	public function set_skip()
+	{
+		$this->__skip = true;
+	}
+
+	/**
 	 * check 404 render
 	 *
 	 * @return boolean
