@@ -11,7 +11,7 @@ env:
 before_install:
   - git clone --recursive --quiet --branch=$BRANCHES git://github.com/fuel/fuel.git "$HOME/fuelphp"
 install:
-  - if [ -e "$HOME/fuelphp/composer.json" ]; then pushd "$HOME/fuelphp" ; wget http://getcomposer.org/composer.phar ; php composer.phar install; popd ; fi
+  - if [ -e "$HOME/fuelphp/composer.json" ]; then pushd "$HOME/fuelphp" ; wget http://getcomposer.org/composer.phar ; php composer.phar self-update; php composer.phar install; popd ; fi
 before_script:
   - ln -sf "`pwd`" "$HOME/fuelphp/fuel/packages/fuelphp-seo"
   - cp -f "`pwd`/tests/travis-ci/config.php"  "$HOME/fuelphp/fuel/app/config/test/"
