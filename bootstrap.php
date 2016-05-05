@@ -19,3 +19,4 @@
 	'Seo\\Query'      => __DIR__.'/classes/query.php',
 	'Seo\\Pagination' => __DIR__.'/classes/pagination.php',
 ));
+\Config::load('seo', true);

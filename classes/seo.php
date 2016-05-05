@@ -132,9 +132,9 @@ class Seo
 		// check added www in production env
 		if(\Fuel\Core\Fuel::$env === \Fuel\Core\Fuel::PRODUCTION)
 		{
-			if( ! preg_match('/^www\./', $_SERVER['HTTP_HOST']))
+			if( ! preg_match('/^'.\Config::get('seo.subdomain').'\./', $_SERVER['HTTP_HOST']))
 			{
-				$new_uri = \Fuel\Core\Input::protocol().'://www.'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+				$new_uri = \Fuel\Core\Input::protocol().'://'.\Config::get('seo.subdomain').'.'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 				\Fuel\Core\Response::redirect($new_uri, 'location', 301);
 			}
 		}
