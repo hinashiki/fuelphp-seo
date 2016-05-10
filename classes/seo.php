@@ -257,7 +257,7 @@ class Seo
 	public function canonical()
 	{
 		// not use when use noindex for seo
-		if($this->_noindex_flg === false && $this->_canonical_flg === true)
+		if($this->_noindex_flg === false and $this->_canonical_flg === true)
 		{
 			return Seo_Html::canonical($this->_canonical_uri);
 		}
