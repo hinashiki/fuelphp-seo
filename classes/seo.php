@@ -54,7 +54,7 @@ class Seo
 		$this->_current_uri = preg_replace('/^\//', '', urldecode($_SERVER['REQUEST_URI']));
 		$this->_current_get = '';
 		$get_pos = strpos($this->_current_uri, '?');
-		if($get_pos > 0)
+		if($get_pos !== false and $get_pos >= 0)
 		{
 			$this->_current_get = substr($this->_current_uri, $get_pos, strlen($this->_current_uri) - $get_pos);
 			$this->_current_uri = substr($this->_current_uri, 0, $get_pos);
