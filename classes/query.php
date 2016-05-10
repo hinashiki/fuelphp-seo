@@ -58,6 +58,18 @@ class Query
 	 */
 	protected static function _make_query($query_arr)
 	{
+		// init check function
+		$check_hash_array = function($arr)
+		{
+			foreach(array_keys($arr) as $key)
+			{
+				if(is_string($key))
+				{
+					return true;
+				}
+			}
+			return false;
+		};
 		// sort array by name asc
 		ksort($query_arr);
 		$query = array();
@@ -74,7 +86,28 @@ class Query
 		// re-insert only value exists
 		foreach($query_arr as $key => $value)
 		{
-			if(strlen($value) > 0){
+			if(is_array($value))
+			{
+				// check has string key
+				$is_hash_array = $check_hash_array($value);
+				if($is_hash_array)
+				{
+					ksort($value, SORT_STRING);
+				}
+				else
+				{
+					sort($value, SORT_STRING);
+				}
+				foreach($value as $k => $v)
+				{
+					if(strlen($v) > 0)
+					{
+						$query[$key][$k] = $v;
+					}
+				}
+			}
+			elseif(strlen($value) > 0)
+			{
 				$query[$key] = $value;
 			}
 		}
@@ -82,6 +115,29 @@ class Query
 		{
 			return '';
 		}
-		return '?' . http_build_query($query);
+		$return_string = '?';
+		foreach($query as $key => $value)
+		{
+			if(is_array($value))
+			{
+				$is_hash_array = $check_hash_array($value);
+				foreach($value as $k => $v)
+				{
+					if($is_hash_array)
+					{
+						$return_string .= $key.'['.$k.']='.rawurlencode($v).'&';
+					}
+					else
+					{
+						$return_string .= $key.'[]='.rawurlencode($v).'&';
+					}
+				}
+			}
+			else
+			{
+				$return_string .= $key.'='.rawurlencode($value).'&';
+			}
+		}
+		return substr($return_string, 0, -1);
 	}
 }
