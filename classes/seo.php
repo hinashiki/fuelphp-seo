@@ -155,11 +155,11 @@ class Seo
 		if(\Fuel\Core\Input::get('page') === '1')
 		{
 			$redirect_flg = true;
-			$redirect_uri = preg_replace('/(&?)(page=1&?)/', '$1', $redirect_uri);
+			$redirect_uri = preg_replace('/[&?](page=1&?)/', '$1', $redirect_uri);
 		}
 
 		// last &, ? check (301 redirect)
-		if(preg_match('/[&\?]$/', $redirect_uri))
+		if(empty(\Input::get()) and  preg_match('/[&\?]$/', $redirect_uri))
 		{
 			$redirect_flg = true;
 			$redirect_uri = preg_replace('/[&\?]$/', '', $redirect_uri);
