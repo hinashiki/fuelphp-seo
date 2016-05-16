@@ -111,7 +111,8 @@ class Pagination extends \Fuel\Core\Pagination
 	/**
 	 * find for pagination
 	 *
-	 * @param  array $params like model find param
+	 * @param  mixed $params array - like model find param
+	 *                       Database_Query_Builder_Select instance - you can use raw DB model
 	 *         boolean $need_count
 	 * @return array
 	 *          |-- list (array)
@@ -119,55 +120,65 @@ class Pagination extends \Fuel\Core\Pagination
 	 */
 	public function find($params, $need_count = true)
 	{
-		$default = array(
-			'select'   => array('*'),
-			'where'    => array(),
-			'limit'    => $this->per_page,
-			'offset'   => $this->get_offset(),
-			'order_by' => array(array('id', 'ASC')),
-		);
-		$params = array_merge($default, $params);
-		if( ! isset($params['from']))
+		if($params instanceof \Fuel\Core\Database_Query_Builder_Select)
 		{
-			throw new \Fuel\Core\Database_Exception('Query "from" not found!');
+			$query_list = $params;
+			$query_cnt = clone $params;
+			$query_cnt->select_array(array(\Fuel\Core\DB::expr('COUNT(*) as cnt')), true);
 		}
-		$query_list = \Fuel\Core\DB::select_array($params['select'])
-			->from($params['from'])
-			->limit($params['limit'])
-			->offset($params['offset']);
-		$query_cnt = \Fuel\Core\DB::select(\Fuel\Core\DB::expr('COUNT(*) as cnt'))
-			->from($params['from']);
-		foreach($params['where'] as $w)
+		else
 		{
-			if(count($w) > 1){
-				call_user_func_array(array($query_list, 'where'), $w);
-				call_user_func_array(array($query_cnt, 'where'), $w);
-			}
-			else
+			$default = array(
+				'select'   => array('*'),
+				'where'    => array(),
+				'limit'    => $this->per_page,
+				'offset'   => $this->get_offset(),
+				'order_by' => array(array('id', 'ASC')),
+			);
+			$params = array_merge($default, $params);
+			if( ! isset($params['from']))
 			{
-				$query_list->where($w);
-				$query_cnt->where($w);
+				throw new \Fuel\Core\Database_Exception('Query "from" not found!');
 			}
-		}
-		foreach($params['order_by'] as $order)
-		{
-			call_user_func_array(array($query_list, 'order_by'), $order);
-		}
-		if(isset($params['group_by']))
-		{
-			if(is_string($params['group_by']))
+			$query_list = \Fuel\Core\DB::select_array($params['select'])
+				->from($params['from'])
+				->limit($params['limit'])
+				->offset($params['offset']);
+			$query_cnt = \Fuel\Core\DB::select(\Fuel\Core\DB::expr('COUNT(*) as cnt'))
+				->from($params['from']);
+			foreach($params['where'] as $w)
 			{
-				$params['group_by'] = array($params['group_by']);
+				if(count($w) > 1){
+					call_user_func_array(array($query_list, 'where'), $w);
+					call_user_func_array(array($query_cnt, 'where'), $w);
+				}
+				else
+				{
+					$query_list->where($w);
+					$query_cnt->where($w);
+				}
 			}
-			call_user_func_array(array($query_list, 'group_by'), $params['group_by']);
-			call_user_func_array(array($query_cnt, 'group_by'), $params['group_by']);
+			foreach($params['order_by'] as $order)
+			{
+				call_user_func_array(array($query_list, 'order_by'), $order);
+			}
+			if(isset($params['group_by']))
+			{
+				if(is_string($params['group_by']))
+				{
+					$params['group_by'] = array($params['group_by']);
+				}
+				call_user_func_array(array($query_list, 'group_by'), $params['group_by']);
+				call_user_func_array(array($query_cnt, 'group_by'), $params['group_by']);
+			}
+
 		}
 		$list = $query_list->execute()->as_array();
 		$cnt = 0;
 		if($need_count)
 		{
 			$cnt = $query_cnt->execute()->as_array();
-			if(isset($params['group_by']))
+			if(count($cnt) > 1)
 			{
 				$cnt = count($cnt);
 			}
