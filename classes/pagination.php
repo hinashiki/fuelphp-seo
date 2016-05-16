@@ -122,9 +122,10 @@ class Pagination extends \Fuel\Core\Pagination
 	{
 		if($params instanceof \Fuel\Core\Database_Query_Builder_Select)
 		{
-			$query_list = $params;
 			$query_cnt = clone $params;
 			$query_cnt->select_array(array(\Fuel\Core\DB::expr('COUNT(*) as cnt')), true);
+			$query_list = $params;
+			$query_list->limit($this->per_page)->offset($this->get_offset());
 		}
 		else
 		{
