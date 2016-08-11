@@ -185,7 +185,7 @@ class Pagination extends \Fuel\Core\Pagination
 			}
 			else
 			{
-				$cnt = $cnt[0]['cnt'];
+				$cnt = \Arr::get(\Arr::get($cnt, 0, array()), 'cnt', 0);
 			}
 		}
 		// set items automatically
