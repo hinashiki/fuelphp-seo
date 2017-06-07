@@ -44,8 +44,36 @@ class Query
 		$uri = substr($uri, 0, $query_pos);
 
 		// rebuild query
+		// DO NOT USE parse_str(). That's brreak "+" string.
 		$query_arr = array();
-		parse_str($query, $query_arr);
+		foreach(explode('&', $query) as $q)
+		{
+			if(strlen($q) < 1)
+			{
+				continue;
+			}
+			$match = array();
+			$key_and_value = explode('=', $q);
+			if(preg_match('/^(.+)\[(.*)\]$/', $key_and_value[0], $match))
+			{
+				if( ! isset($query_arr[$match[1]]))
+				{
+					$query_arr[$match[1]] = array();
+				}
+				if(strlen($match[2]) < 1)
+				{
+					$query_arr[$match[1]][] = $key_and_value[1];
+				}
+				else
+				{
+					$query_arr[$match[1]][$match[2]] = $key_and_value[1];
+				}
+			}
+			else
+			{
+				$query_arr[$key_and_value[0]] = \Arr::get($key_and_value, 1);
+			}
+		}
 		$query = static::_make_query($query_arr);
 		return $uri.$query;
 	}
