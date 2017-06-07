@@ -9,6 +9,10 @@ env:
   - BRANCHES=1.7/master
   - BRANCHES=1.6/master
   - BRANCHES=1.5/master
+matrix:
+  exclude:
+    - php: 5.3
+      env: BRANCHES=1.8/master
 before_install:
   - git clone --recursive --quiet --branch=$BRANCHES git://github.com/fuel/fuel.git "$HOME/fuelphp"
 install:
