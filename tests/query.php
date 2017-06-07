@@ -72,6 +72,11 @@ class Test_Query extends \Fuel\Core\TestCase
 		);
 		$this->assertEquals('fuga/hoge?a[0]=baz&a[aa]=foo&a[bb]=bar', \Seo\Query::build('fuga/hoge'));
 
+		$_GET = array(
+			'a' => 'bar+'
+		);
+		$this->assertEquals('fuga/hoge?a=bar%2B', \Seo\Query::build('fuga/hoge'));
+
 	}
 
 	public function test_rebuild()
@@ -151,6 +156,11 @@ class Test_Query extends \Fuel\Core\TestCase
 		$this->assertEquals(
 			'hoge/fuga',
 			\Seo\Query::rebuild('hoge/fuga')
+		);
+		// +文字列はスペースに変換せずそのまま返す
+		$this->assertEquals(
+			'hoge/fuga?a=1%2B2',
+			\Seo\Query::rebuild('hoge/fuga?a=1+2')
 		);
 	}
 }
