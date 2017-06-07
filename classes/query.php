@@ -22,7 +22,17 @@ class Query
 	 */
 	public static function build($uri = '')
 	{
-		$query = static::_make_query(\Fuel\Core\Input::get());
+		// v1.8 or later
+		if(class_exists("Fuel\Core\Input_Instance"))
+		{
+			$instance = new \Fuel\Core\Input_Instance();
+			$get = $instance->get();
+		}
+		else
+		{
+			$get = \Fuel\Core\Input::get();
+		}
+		$query = static::_make_query($get);
 		return $uri.$query;
 	}
 
